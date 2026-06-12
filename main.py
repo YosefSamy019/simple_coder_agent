@@ -1,3 +1,5 @@
+import shutil
+
 from const import *
 import asyncio
 from openai import OpenAI
@@ -80,7 +82,7 @@ def build_sidebar():
 
         st.divider()
 
-        btn_cols = st.columns(2)
+        btn_cols = st.columns(3)
 
         if btn_cols[0].button("Clear Chat"):
             st.session_state[MSGS_KEY] = list(
@@ -89,8 +91,16 @@ def build_sidebar():
                     st.session_state[MSGS_KEY]
                 )
             )
+        if btn_cols[1].button("Clear Directory"):
+            directory = Path("my_dir")
 
-        if btn_cols[1].button("Show Tools"):
+            for item in directory.iterdir():
+                if item.is_dir():
+                    shutil.rmtree(item)
+                else:
+                    item.unlink()
+
+        if btn_cols[2].button("Show Tools"):
             @st.dialog(title="Tools", width='large')
             def dialog():
                 st.write(get_all_tools_list())
@@ -167,7 +177,6 @@ def handle_input():
     add_message(UserChatMsg(content=prompt))
 
     st.session_state[AGENT_STATUS] = AgentStatus.RUNNING
-    # st.rerun()
 
 
 def build_chat():
@@ -225,7 +234,7 @@ def is_goal_achieved() -> bool:
     return False
 
 
-async def call_model():
+def call_model():
     try:
         client = OpenAI(
             base_url=st.session_state.get(URL_KEY) + st.session_state.get(END_POINT_KEY),
@@ -294,7 +303,7 @@ def main():
         st.session_state[AGENT_STATUS] = AgentStatus.STOPPED
 
     if st.session_state.get(AGENT_STATUS) == AgentStatus.RUNNING:
-        asyncio.run(call_model())
+        call_model()
         st.rerun()
 
 
