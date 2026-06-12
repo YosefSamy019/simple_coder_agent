@@ -23,8 +23,9 @@ class UserChatMsg(ChatMsg):
 
 
 class AssistantChatMsg(ChatMsg):
-    def __init__(self, content: str, tool_calls: list,dump):
-        self.content = content
+    def __init__(self, content: str, reasoning: str, tool_calls: list, dump):
+        self.content = content if content else ""
+        self.reasoning = reasoning if reasoning else ''
         self.dump = dump
         tool_calls = tool_calls if tool_calls else []
         self.tool_calls = [

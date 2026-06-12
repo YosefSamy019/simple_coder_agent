@@ -21,6 +21,7 @@ def init():
 
     st.session_state.setdefault(URL_KEY, 'https://ed32-34-142-231-234.ngrok-free.app')
     st.session_state.setdefault(END_POINT_KEY, '/v1')
+    st.session_state.setdefault(CALLS_COUNTER, 0)
 
     st.session_state.setdefault(AGENT_STATUS, AgentStatus.STOPPED)
 
@@ -76,7 +77,7 @@ def build_sidebar():
         cols_side_bar_a[1].selectbox(
             label="Model",
             key=MODEL_KEY,
-            index=0,
+            index=1,
             options=[
                 "qwen2.5-coder:14b",
                 "gemma4:e2b",
@@ -194,7 +195,7 @@ def handle_input():
 
 
 def build_chat():
-    st.title("🤖 My Simple Coder Agent")
+    st.title(f"🤖 My Simple Coder Agent ({st.session_state[CALLS_COUNTER]})")
 
     st.chat_input(
         "Ask the agent...",
@@ -218,6 +219,7 @@ def build_messages():
                     avatar="🤖"
             ):
                 st.markdown(msg.content)
+                st.markdown(msg.reasoning)
 
         elif isinstance(msg, SystemChatMsg):
             with st.container(border=True):
@@ -238,6 +240,7 @@ def build_messages():
 
 
 def is_goal_achieved() -> bool:
+    return False
     if len(st.session_state.get(MSGS_KEY)) > 2:
         last_1_msg = st.session_state.get(MSGS_KEY)[-1]
         last_2_msg = st.session_state.get(MSGS_KEY)[-2]
@@ -259,6 +262,8 @@ def call_model():
             api_key='111'
         )
 
+        st.session_state[CALLS_COUNTER] = st.session_state[CALLS_COUNTER] + 1
+
         completion = client.chat.completions.create(
             model=st.session_state.get(MODEL_KEY),
             messages=[
@@ -267,18 +272,19 @@ def call_model():
             tools=get_all_tools_list(),
         )
 
-        st.write()
-
         assistant_msg = AssistantChatMsg(
-            dump=completion.choices[0].message.dict(),
+            dump=completion.choices[0].message.model_dump(),
             content=completion.choices[0].message.content,
+            reasoning=completion.choices[0].message.reasoning,
             tool_calls=completion.choices[0].message.tool_calls,
         )
 
+        add_message(assistant_msg)
+
         for tool_call_json in assistant_msg.tool_calls:
-            function_name = tool_call_json.function.name
-            function_arguments = json.loads(tool_call_json.function.arguments)
-            tool_call_id = tool_call_json.id
+            function_name = tool_call_json['function']['name']
+            function_arguments = json.loads(tool_call_json['function']['arguments'])
+            tool_call_id = tool_call_json['id']
 
             result = "Tool Not Found"
 
@@ -298,7 +304,7 @@ def call_model():
             )
 
     except Exception as e:
-        # raise e
+        raise e
         st.error(e)
 
     finally:
