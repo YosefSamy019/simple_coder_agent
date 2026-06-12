@@ -270,12 +270,10 @@ def call_model():
         st.write()
 
         assistant_msg = AssistantChatMsg(
+            dump=completion.choices[0].message.dict(),
             content=completion.choices[0].message.content,
             tool_calls=completion.choices[0].message.tool_calls,
         )
-
-        print(completion.choices[0].message.model_dump())
-        # add_message(assistant_msg)
 
         for tool_call_json in assistant_msg.tool_calls:
             function_name = tool_call_json.function.name

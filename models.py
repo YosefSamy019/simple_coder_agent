@@ -23,8 +23,9 @@ class UserChatMsg(ChatMsg):
 
 
 class AssistantChatMsg(ChatMsg):
-    def __init__(self, content: str, tool_calls: list):
+    def __init__(self, content: str, tool_calls: list,dump):
         self.content = content
+        self.dump = dump
         tool_calls = tool_calls if tool_calls else []
         self.tool_calls = [
             {
@@ -39,6 +40,7 @@ class AssistantChatMsg(ChatMsg):
         ]
 
     def to_json(self) -> dict:
+        return self.dump
         return {"role": 'assistant', "content": self.content}
         return {"role": 'assistant', "content": self.content, "tool_calls": self.tool_calls}
 
