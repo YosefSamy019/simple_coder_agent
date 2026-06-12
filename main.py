@@ -16,16 +16,19 @@ def init():
         layout="wide",
     )
 
-    st.session_state.setdefault(URL_KEY, 'https://68ea-35-233-154-11.ngrok-free.app')
+    st.session_state.setdefault(URL_KEY, 'https://f169-136-117-78-58.ngrok-free.app')
     st.session_state.setdefault(END_POINT_KEY, '/v1')
 
     st.session_state.setdefault(AGENT_STATUS, AgentStatus.STOPPED)
 
     st.session_state.setdefault(
         MSGS_KEY, [
-            SystemChatMsg(content="""
+            SystemChatMsg(content=f"""
 You are a helpful coding assistant. Your goal is to help the user with programming tasks.
             
+You have access to the following tools:
+{"\n".join([f"- {x().get_name()}: {x().get_description()}" for x in AgentTool.__subclasses__()])}
+
 For each user request:
 1. Understand what the user is trying to accomplish
 2. Break down complex tasks into smaller steps
@@ -77,7 +80,12 @@ def build_sidebar():
         st.divider()
 
         if st.button("Clear Chat"):
-            st.session_state[MSGS_KEY] = []
+            st.session_state[MSGS_KEY] = list(
+                filter(
+                    lambda x: isinstance(x, SystemChatMsg),
+                    st.session_state[MSGS_KEY]
+                )
+            )
 
         if st.button("Show Tools"):
             @st.dialog(title="Tools", width='large')
@@ -98,13 +106,6 @@ def handle_input():
         return
 
     add_message(UserChatMsg(content=prompt))
-
-    RunCommandTool().execute(
-        {
-            'command': "echo 123",
-            "working_dir": ""
-        }
-    )
 
     st.session_state[AGENT_STATUS] = AgentStatus.RUNNING
     asyncio.run(call_model())
@@ -138,7 +139,8 @@ def build_messages():
 
         elif isinstance(msg, SystemChatMsg):
             with st.container(border=True):
-                st.markdown('⚙️ System Message: ```Hidden```')
+                # st.markdown('⚙️ System Message: ```Hidden```')
+                st.markdown(msg.content)
 
 
         elif isinstance(msg, ToolCallChatMsg):
