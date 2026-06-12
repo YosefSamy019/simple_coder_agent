@@ -261,8 +261,7 @@ def call_model():
             tool_calls=completion.choices[0].message.tool_calls,
         )
 
-        if len(assistant_msg.content.strip()) > 0:
-            add_message(assistant_msg)
+        add_message(assistant_msg)
 
         for tool_call_json in assistant_msg.tool_calls:
             function_name = tool_call_json.function.name
