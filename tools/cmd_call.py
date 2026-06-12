@@ -18,18 +18,13 @@ class RunCommandTool(AgentTool):
                 "command": {
                     "type": "string",
                     "description": "Shell command to execute",
-                },
-                "working_dir": {
-                    "type": "string",
-                    "description": "Directory to run the command in (optional)",
-                },
+                }
             },
             "required": ["command"],
         }
 
     def execute(self, parameters: dict) -> str:
         command: str | None = parameters.get("command")
-        working_dir: str | None = parameters.get("working_dir")
 
         if not command:
             return "Error: `command` must be provided."
@@ -41,7 +36,7 @@ class RunCommandTool(AgentTool):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
-                cwd=working_dir,
+                cwd=AgentTool.WORKING_DIR,
             )
 
             output, _ = process.communicate()

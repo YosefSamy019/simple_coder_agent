@@ -167,7 +167,7 @@ def handle_input():
     add_message(UserChatMsg(content=prompt))
 
     st.session_state[AGENT_STATUS] = AgentStatus.RUNNING
-    asyncio.run(call_model())
+    # st.rerun()
 
 
 def build_chat():
