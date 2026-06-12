@@ -1,0 +1,239 @@
+from const import *
+import asyncio
+from openai import OpenAI
+
+from models import SystemChatMsg, ChatMsg, UserChatMsg, AssistantChatMsg, ToolCallChatMsg, AgentStatus
+from tools import *
+
+
+# =====================
+# State Management
+# =====================
+
+def init():
+    st.set_page_config(
+        page_title="My Simple Coder Agent 🤖",
+        layout="wide",
+    )
+
+    st.session_state.setdefault(URL_KEY, 'https://68ea-35-233-154-11.ngrok-free.app')
+    st.session_state.setdefault(END_POINT_KEY, '/v1')
+
+    st.session_state.setdefault(AGENT_STATUS, AgentStatus.STOPPED)
+
+    st.session_state.setdefault(
+        MSGS_KEY, [
+            SystemChatMsg(content="""
+You are a helpful coding assistant. Your goal is to help the user with programming tasks.
+            
+For each user request:
+1. Understand what the user is trying to accomplish
+2. Break down complex tasks into smaller steps
+3. Use your tools to gather information about the codebase when needed
+4. Implement solutions by writing or modifying code
+5. Explain your reasoning and approach
+
+When modifying code, be careful to maintain the existing style and structure. Test your changes when possible.
+If you're unsure about something, ask clarifying questions before proceeding.
+
+You must run and test your changes before reporting success.
+            """.strip()),
+        ]
+    )
+
+
+def add_message(msg: ChatMsg):
+    st.session_state[MSGS_KEY].append(msg)
+
+
+# =====================
+# Sidebar
+# =====================
+
+def build_sidebar():
+    with st.sidebar:
+        st.title("⚙️ Settings")
+
+        st.text_input(
+            label="API URL",
+            key=URL_KEY,
+        )
+
+        st.text_input(
+            label="End Point",
+            key=END_POINT_KEY,
+        )
+
+        st.selectbox(
+            label="Model",
+            key=MODEL_KEY,
+            index=1,
+            options=[
+                "gemma4:e2b",
+                "qwen2.5:3b"
+            ]
+        )
+
+        st.divider()
+
+        if st.button("Clear Chat"):
+            st.session_state[MSGS_KEY] = []
+
+        if st.button("Show Tools"):
+            @st.dialog(title="Tools", width='large')
+            def dialog():
+                st.write(get_all_tools_list())
+
+            dialog()
+
+
+# =====================
+# Chat
+# =====================
+
+def handle_input():
+    prompt = st.session_state.get(CHAT_KEY)
+
+    if not prompt:
+        return
+
+    add_message(UserChatMsg(content=prompt))
+
+    RunCommandTool().execute(
+        {
+            'command': "echo 123",
+            "working_dir": ""
+        }
+    )
+
+    st.session_state[AGENT_STATUS] = AgentStatus.RUNNING
+    asyncio.run(call_model())
+
+
+def build_chat():
+    st.title("🤖 My Simple Coder Agent")
+
+    st.chat_input(
+        "Ask the agent...",
+        key=CHAT_KEY,
+        on_submit=handle_input,
+    )
+
+
+def build_messages():
+    for msg in st.session_state[MSGS_KEY]:
+        if isinstance(msg, UserChatMsg):
+            with st.chat_message(
+                    name='human',
+                    avatar="👤"
+            ):
+                st.markdown(msg.content)
+
+        elif isinstance(msg, AssistantChatMsg):
+            with st.chat_message(
+                    name='ai',
+                    avatar="🤖"
+            ):
+                st.markdown(msg.content)
+
+        elif isinstance(msg, SystemChatMsg):
+            with st.container(border=True):
+                st.markdown('⚙️ System Message: ```Hidden```')
+
+
+        elif isinstance(msg, ToolCallChatMsg):
+            with st.expander(label=f'💻 Call {msg.function_name}'):
+                st.markdown(f"call id: {msg.tool_call_id}")
+                st.markdown(f"function: {msg.function_name}")
+                st.markdown(f"args: {msg.function_arguments}")
+                st.divider()
+                st.markdown(f"result:")
+                st.markdown(f"{msg.result}")
+        else:
+            st.error(f"Unknown message, type{type(msg)}")
+
+
+def is_goal_achieved() -> bool:
+    if len(st.session_state.get(MSGS_KEY)) > 0:
+        last_msg = st.session_state.get(MSGS_KEY)[-1]
+
+        if isinstance(last_msg, AssistantChatMsg):
+            if len(last_msg.tool_calls) == 0:
+                return True
+
+    return False
+
+
+async def call_model():
+    try:
+        client = OpenAI(
+            base_url=st.session_state.get(URL_KEY) + st.session_state.get(END_POINT_KEY),
+            api_key='111'
+        )
+
+        completion = client.chat.completions.create(
+            model=st.session_state.get(MODEL_KEY),
+            messages=[
+                m.to_json() for m in st.session_state.get(MSGS_KEY)
+            ],
+            tools=get_all_tools_list(),
+        )
+
+        assistant_msg = AssistantChatMsg(
+            content=completion.choices[0].message.content,
+            tool_calls=completion.choices[0].message.tool_calls,
+        )
+
+        if len(assistant_msg.content.strip()) > 0:
+            add_message(assistant_msg)
+
+        for tool_call_json in assistant_msg.tool_calls:
+            function_name = tool_call_json.function.name
+            function_arguments = json.loads(tool_call_json.function.arguments)
+            tool_call_id = tool_call_json.id
+
+            result = "Tool Not Found"
+
+            for tool_class in AgentTool.__subclasses__():
+                tool_obj = tool_class()
+                if tool_obj.get_name() == function_name:
+                    result = tool_obj.execute(parameters=function_arguments)
+                    break
+
+            add_message(
+                ToolCallChatMsg(
+                    tool_call_id=tool_call_id,
+                    function_name=function_name,
+                    function_arguments=function_arguments,
+                    result=result
+                )
+            )
+
+    except Exception as e:
+        # raise e
+        st.error(e)
+
+    finally:
+        pass
+
+
+# =====================
+# Main
+# =====================
+
+def main():
+    init()
+    build_sidebar()
+    build_chat()
+    build_messages()
+
+    if is_goal_achieved():
+        st.session_state[AGENT_STATUS] = AgentStatus.STOPPED
+
+    if st.session_state.get(AGENT_STATUS) == AgentStatus.RUNNING:
+        asyncio.run(call_model())
+        st.rerun()
+
+
+if __name__ == "__main__":
+    main()

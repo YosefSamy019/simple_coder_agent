@@ -1,0 +1,7 @@
+[theme]
+base="dark"
+primaryColor="#4DB6AC"              # Soft teal
+backgroundColor="#181A1B"           # Dark gray, not pure black
+secondaryBackgroundColor="#242628"  # Cards and widgets
+textColor="#F1F3F4"                 # Soft white
+font="sans serif"
