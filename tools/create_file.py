@@ -40,7 +40,9 @@ class CreateFileTool(AgentTool):
             total_path = filename
 
             # Create parent directories if necessary
-            os.makedirs(os.path.dirname(total_path), exist_ok=True)
+            parent_dir = os.path.dirname(total_path)
+            if parent_dir:
+                os.makedirs(parent_dir, exist_ok=True)
 
             # if os.path.exists(total_path):
             #     return f"File {filename} already exists."
