@@ -92,7 +92,7 @@ def build_sidebar():
                 )
             )
         if btn_cols[1].button("Clear Directory"):
-            directory = Path("my_dir")
+            directory = Path(AgentTool.WORKING_DIR)
 
             for item in directory.iterdir():
                 if item.is_dir():
