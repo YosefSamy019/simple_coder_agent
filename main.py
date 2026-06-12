@@ -267,7 +267,7 @@ def call_model():
             tools=get_all_tools_list(),
         )
 
-        st.write(completion.choices[0].message)
+        st.write(completion.choices[0].message.model_dump())
 
         assistant_msg = AssistantChatMsg(
             content=completion.choices[0].message.content,
