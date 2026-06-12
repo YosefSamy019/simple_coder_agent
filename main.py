@@ -19,7 +19,7 @@ def init():
         layout="wide",
     )
 
-    st.session_state.setdefault(URL_KEY, 'https://f169-136-117-78-58.ngrok-free.app')
+    st.session_state.setdefault(URL_KEY, 'https://e949-136-117-78-58.ngrok-free.app')
     st.session_state.setdefault(END_POINT_KEY, '/v1')
 
     st.session_state.setdefault(AGENT_STATUS, AgentStatus.STOPPED)
