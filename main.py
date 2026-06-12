@@ -104,7 +104,7 @@ def build_sidebar():
         render_tree(Path(AgentTool.WORKING_DIR))
 
 
-@st.dialog("File Viewer")
+@st.dialog("File Viewer", width='large')
 def show_file(filepath: Path):
     try:
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
