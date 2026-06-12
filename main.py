@@ -267,14 +267,15 @@ def call_model():
             tools=get_all_tools_list(),
         )
 
-        st.write(completion.choices[0].message.model_dump())
+        st.write()
 
         assistant_msg = AssistantChatMsg(
             content=completion.choices[0].message.content,
             tool_calls=completion.choices[0].message.tool_calls,
         )
 
-        add_message(assistant_msg)
+        print(completion.choices[0].message.model_dump())
+        # add_message(assistant_msg)
 
         for tool_call_json in assistant_msg.tool_calls:
             function_name = tool_call_json.function.name
