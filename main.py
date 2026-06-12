@@ -80,7 +80,9 @@ def build_sidebar():
 
         st.divider()
 
-        if st.button("Clear Chat"):
+        btn_cols = st.columns(2)
+
+        if btn_cols[0].button("Clear Chat"):
             st.session_state[MSGS_KEY] = list(
                 filter(
                     lambda x: isinstance(x, SystemChatMsg),
@@ -88,7 +90,7 @@ def build_sidebar():
                 )
             )
 
-        if st.button("Show Tools"):
+        if btn_cols[1].button("Show Tools"):
             @st.dialog(title="Tools", width='large')
             def dialog():
                 st.write(get_all_tools_list())
