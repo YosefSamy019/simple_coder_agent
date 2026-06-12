@@ -14,11 +14,7 @@ class MarkFinishTool(AgentTool):
         return "Must be called when task is done"
 
     def get_parameters(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {},
-            "required": [],
-        }
+        return None
 
     def execute(self, parameters: dict) -> str:
 
