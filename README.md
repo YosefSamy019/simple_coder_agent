@@ -9,6 +9,9 @@ Before using the agent, you **must upload and run** the file:
 inside **Google Colab**, then obtain the generated **API URL** from there.  
 This API is required for the agent to function correctly.
 
+You can access the hosted version of the application here: 
+https://simplecoderagent-mvn7e6a3pbzvygpvcshm9y.streamlit.app/
+
 ---
 
 ## 🌟 Features
@@ -60,3 +63,6 @@ This API is required for the agent to function correctly.
 This agent can execute shell commands on your local machine via the `run_command` tool. Always run it in a controlled or
 sandboxed environment and be cautious when providing instructions that involve sensitive data or system-level changes.
 
+---
+
+## 🛡️ Preview
