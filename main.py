@@ -1,6 +1,7 @@
 from const import *
 import asyncio
 from openai import OpenAI
+from pathlib import Path
 
 from models import SystemChatMsg, ChatMsg, UserChatMsg, AssistantChatMsg, ToolCallChatMsg, AgentStatus
 from tools import *
@@ -93,6 +94,62 @@ def build_sidebar():
                 st.write(get_all_tools_list())
 
             dialog()
+
+        st.divider()
+
+        st.title("📂 File Explorer")
+
+        render_tree(Path(AgentTool.WORKING_DIR))
+
+
+@st.dialog("File Viewer")
+def show_file(filepath: Path):
+    try:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+
+        st.code(content, language=filepath.suffix.lstrip("."))
+    except Exception as e:
+        st.error(f"Could not open file: {e}")
+
+
+def render_tree(path: Path, level=0):
+    items = sorted(
+        path.iterdir(),
+        key=lambda p: (p.is_file(), p.name.lower())
+    )
+
+    for item in items:
+        if item.is_dir():
+            st.markdown("&nbsp;" * level * 4 + f"📁 **{item.name}**",
+                        unsafe_allow_html=True)
+            render_tree(item, level + 1)
+
+        else:
+            cols = st.columns([6, 1, 1])
+
+            indent = "&nbsp;" * level * 4
+            cols[0].markdown(
+                indent + f"📄 {item.name}",
+                unsafe_allow_html=True,
+            )
+
+            with cols[1]:
+                with open(item, "rb") as f:
+                    st.download_button(
+                        "📥",
+                        data=f.read(),
+                        file_name=item.name,
+                        key=f"download_{item}",
+                    )
+
+            with cols[2]:
+                if st.button(
+                        "👁",
+                        key=f"view_{item}",
+                        help="View file",
+                ):
+                    show_file(item)
 
 
 # =====================
