@@ -16,15 +16,15 @@ class EditFileTool(AgentTool):
             "properties": {
                 "filename": {
                     "type": "string",
-                    "description": "The name of the file to modify",
+                    "description": "The name of the file to modify.",
                 },
                 "find_str": {
                     "type": "string",
-                    "description": "The string to find in the file, default value is a single space.",
+                    "description": "The string to find in the file.",
                 },
                 "replace_str": {
                     "type": "string",
-                    "description": "The string to replace with, default value is a single space.",
+                    "description": "The string to replace with.",
                 },
             },
             "required": ["filename", "find_str", "replace_str"],
