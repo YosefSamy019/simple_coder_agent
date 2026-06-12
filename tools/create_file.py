@@ -20,7 +20,7 @@ class CreateFileTool(AgentTool):
                 },
                 "content": {
                     "type": "string",
-                    "description": "The content to write into the file. Default is an empty string.",
+                    "description": "The content to write into the file.",
                 },
             },
             "required": ["filename", "content"],
