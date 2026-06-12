@@ -203,7 +203,7 @@ def build_messages():
 
 
         elif isinstance(msg, ToolCallChatMsg):
-            with st.expander(label=f'💻 Call {msg.function_name}'):
+            with st.expander(label=f'💻 {msg.function_name} {msg.result[:300]}'):
                 st.markdown(f"call id: {msg.tool_call_id}")
                 st.markdown(f"function: {msg.function_name}")
                 st.markdown(f"args: {msg.function_arguments}")
