@@ -25,6 +25,7 @@ class UserChatMsg(ChatMsg):
 class AssistantChatMsg(ChatMsg):
     def __init__(self, content: str, tool_calls: list):
         self.content = content
+        tool_calls = tool_calls if tool_calls else []
         self.tool_calls = [
             {
                 "id": tc.id,
