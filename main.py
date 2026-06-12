@@ -275,7 +275,7 @@ def call_model():
         assistant_msg = AssistantChatMsg(
             dump=completion.choices[0].message.model_dump(),
             content=completion.choices[0].message.content,
-            reasoning=completion.choices[0].message.reasoning,
+            reasoning=getattr(completion.choices[0].message, "reasoning", None),
             tool_calls=completion.choices[0].message.tool_calls,
         )
 
