@@ -85,16 +85,17 @@ def build_sidebar():
 
         st.divider()
 
-        btn_cols = st.columns(3)
+        btn_cols_1 = st.columns(2)
+        btn_cols_2 = st.columns(2)
 
-        if btn_cols[0].button("Clear Chat"):
+        if btn_cols_1[0].button("Clear Chat"):
             st.session_state[MSGS_KEY] = list(
                 filter(
                     lambda x: isinstance(x, SystemChatMsg),
                     st.session_state[MSGS_KEY]
                 )
             )
-        if btn_cols[1].button("Clear Directory"):
+        if btn_cols_1[1].button("Clear Directory"):
             directory = Path(AgentTool.WORKING_DIR)
 
             for item in directory.iterdir():
@@ -103,10 +104,19 @@ def build_sidebar():
                 else:
                     item.unlink()
 
-        if btn_cols[2].button("Show Tools"):
+        if btn_cols_2[0].button("Show Tools"):
             @st.dialog(title="Tools", width='large')
             def dialog():
                 st.write(get_all_tools_list())
+
+            dialog()
+
+        if btn_cols_2[1].button("Show Buffer"):
+            @st.dialog(title="Tools", width='large')
+            def dialog():
+                st.write([
+                    m.to_json() for m in st.session_state.get(MSGS_KEY)
+                ])
 
             dialog()
 
