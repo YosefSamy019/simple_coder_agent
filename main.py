@@ -229,9 +229,12 @@ def is_goal_achieved() -> bool:
         last_1_msg = st.session_state.get(MSGS_KEY)[-1]
         last_2_msg = st.session_state.get(MSGS_KEY)[-2]
 
-        if isinstance(last_1_msg, AssistantChatMsg) and isinstance(last_2_msg, AssistantChatMsg):
-            if len(last_1_msg.tool_calls) == 0 and len(last_2_msg.tool_calls) == 0:
-                return True
+        if isinstance(last_1_msg, AssistantChatMsg) and len(last_1_msg.tool_calls) == 0:
+            return True
+
+        # if isinstance(last_1_msg, AssistantChatMsg) and isinstance(last_2_msg, AssistantChatMsg):
+        #     if len(last_1_msg.tool_calls) == 0 and len(last_2_msg.tool_calls) == 0:
+        #         return True
 
     return False
 
