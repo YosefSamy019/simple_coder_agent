@@ -8,7 +8,7 @@ class CreateFileTool(AgentTool):
         return "create_file"
 
     def get_description(self) -> str:
-        return "Create a new file with the provided content."
+        return "Create a new file with the provided content or replace an existing one."
 
     def get_parameters(self) -> dict:
         return {
@@ -42,8 +42,8 @@ class CreateFileTool(AgentTool):
             # Create parent directories if necessary
             os.makedirs(os.path.dirname(total_path), exist_ok=True)
 
-            if os.path.exists(total_path):
-                return f"File {filename} already exists."
+            # if os.path.exists(total_path):
+            #     return f"File {filename} already exists."
 
             with open(total_path, "w", encoding="utf-8") as f:
                 f.write(content)

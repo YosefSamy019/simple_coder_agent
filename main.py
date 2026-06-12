@@ -71,7 +71,7 @@ def build_sidebar():
         st.selectbox(
             label="Model",
             key=MODEL_KEY,
-            index=1,
+            index=0,
             options=[
                 "gemma4:e2b",
                 "qwen2.5:3b"
