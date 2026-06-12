@@ -66,12 +66,14 @@ def build_sidebar():
             key=URL_KEY,
         )
 
-        st.text_input(
+        cols_side_bar_a = st.columns(2)
+
+        cols_side_bar_a[0].text_input(
             label="End Point",
             key=END_POINT_KEY,
         )
 
-        st.selectbox(
+        cols_side_bar_a[1].selectbox(
             label="Model",
             key=MODEL_KEY,
             index=0,
