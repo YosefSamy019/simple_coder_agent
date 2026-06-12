@@ -21,7 +21,7 @@ class RunCommandTool(AgentTool):
                 },
                 "working_dir": {
                     "type": "string",
-                    "description": "Directory to run the command in (optional)",
+                    "description": "Directory to run the command in",
                 },
             },
             "required": ["command"],
