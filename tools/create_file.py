@@ -37,7 +37,7 @@ class CreateFileTool(AgentTool):
             return "Error: field `content` must be provided."
 
         try:
-            total_path = os.path.join(super().WORKING_DIR, filename)
+            total_path = filename
 
             # Create parent directories if necessary
             os.makedirs(os.path.dirname(total_path), exist_ok=True)

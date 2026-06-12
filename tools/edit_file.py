@@ -45,7 +45,7 @@ class EditFileTool(AgentTool):
             return "Error: field `replace_str` must be provided."
 
         try:
-            total_path = os.path.join(super().WORKING_DIR, filename)
+            total_path = filename
 
             with open(total_path, "r", encoding="utf-8") as f:
                 file_content = f.read()

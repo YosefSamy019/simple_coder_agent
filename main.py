@@ -39,7 +39,9 @@ For each user request:
 3. Use your tools to gather information about the codebase when needed
 4. Implement solutions by writing or modifying code
 5. Explain your reasoning and approach
-6. Call `deliver_task` when you finish the task
+6. You must put all created files in folder `{AgentTool.WORKING_DIR}`, Dont go outside.
+7. Call `deliver_task` when you finish the task
+
 
 When modifying code, be careful to maintain the existing style and structure. Test your changes when possible.
 If you're unsure about something, ask clarifying questions before proceeding.
