@@ -1,0 +1,30 @@
+import os.path
+import streamlit as st
+
+import const
+from models import AgentStatus
+from tools.tools import AgentTool
+
+
+class MarkFinishTool(AgentTool):
+    def get_name(self) -> str:
+        return "deliver_task"
+
+    def get_description(self) -> str:
+        return "Must be called when task is done"
+
+    def get_parameters(self) -> dict:
+        return {
+            "type": "object",
+            "properties": {},
+            "required": [],
+        }
+
+    def execute(self, parameters: dict) -> str:
+
+        try:
+            st.session_state[const.AGENT_STATUS] = AgentStatus.STOPPED
+            return "Task is delivered successfully"
+
+        except Exception as e:
+            return f"Error: {e}"
