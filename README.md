@@ -9,8 +9,8 @@ Before using the agent, you **must upload and run** the file:
 inside **Google Colab**, then obtain the generated **API URL** from there.  
 This API is required for the agent to function correctly.
 
-You can access the hosted version of the application here: 
-https://simplecoderagent-mvn7e6a3pbzvygpvcshm9y.streamlit.app/
+You can access the hosted version of the application here:  
+[Simple Coder Agent 🚀](https://simplecoderagent-mvn7e6a3pbzvygpvcshm9y.streamlit.app/)
 
 ---
 
@@ -65,4 +65,6 @@ sandboxed environment and be cautious when providing instructions that involve s
 
 ---
 
-## 🛡️ Preview
+## 📷 Preview
+![img.png](img.png)
+![img_1.png](img_1.png)
