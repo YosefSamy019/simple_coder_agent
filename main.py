@@ -42,7 +42,6 @@ For each user request:
 6. You must put all created files in folder `{AgentTool.WORKING_DIR}`, Dont go outside.
 7. Call `deliver_task` when you finish the task
 
-
 When modifying code, be careful to maintain the existing style and structure. Test your changes when possible.
 If you're unsure about something, ask clarifying questions before proceeding.
 
