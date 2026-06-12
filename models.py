@@ -39,8 +39,8 @@ class AssistantChatMsg(ChatMsg):
         ]
 
     def to_json(self) -> dict:
-        #"tool_calls": self.tool_calls
-        return {"role": 'assistant', "content": self.content, }
+        # "tool_calls": self.tool_calls
+        return {"role": 'assistant', "content": self.content, "tool_calls": self.tool_calls}
 
 
 class SystemChatMsg(ChatMsg):
@@ -62,5 +62,6 @@ class ToolCallChatMsg(ChatMsg):
         return {
             "role": 'tool',
             "content": self.result,
-            # "name": self.function_name,
-            "tool_call_id": self.tool_call_id}
+            "name": self.function_name,
+            "tool_call_id": self.tool_call_id
+        }
