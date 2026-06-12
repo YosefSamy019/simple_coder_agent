@@ -39,7 +39,8 @@ class AssistantChatMsg(ChatMsg):
         ]
 
     def to_json(self) -> dict:
-        return {"role": 'assistant', "content": self.content, "tool_calls": self.tool_calls}
+        #"tool_calls": self.tool_calls
+        return {"role": 'assistant', "content": self.content, }
 
 
 class SystemChatMsg(ChatMsg):
