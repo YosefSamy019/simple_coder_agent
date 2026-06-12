@@ -62,5 +62,5 @@ class ToolCallChatMsg(ChatMsg):
         return {
             "role": 'tool',
             "content": self.result,
-            "name": self.function_name,
+            # "name": self.function_name,
             "tool_call_id": self.tool_call_id}
