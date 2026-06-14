@@ -26,8 +26,8 @@ def build_sidebar():
             key=MODEL_KEY,
             index=0,
             options=[
-                "gemma4:e2b",
                 "gemma4:12b",
+                "gemma4:e2b",
                 "qwen2.5:3b"
             ]
         )

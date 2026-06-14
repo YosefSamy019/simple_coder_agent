@@ -52,6 +52,7 @@ def build_messages():
                         name='ai',
                         avatar="💡"
                 ):
+                    st.markdown('```Reasoning```')
                     st.markdown(msg.reasoning)
 
         elif isinstance(msg, SystemChatMsg):
