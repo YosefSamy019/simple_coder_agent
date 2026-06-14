@@ -30,6 +30,8 @@ def build_chat():
 
 def build_messages():
     for i, msg in enumerate(st.session_state[MSGS_KEY]):
+        is_this_last = i == len(st.session_state[MSGS_KEY]) - 1
+
         if isinstance(msg, UserChatMsg):
             with st.chat_message(
                     name='human',
@@ -45,7 +47,7 @@ def build_messages():
                 ):
                     st.markdown(msg.content)
 
-            if len(msg.reasoning) > 0 and i == len(st.session_state[MSGS_KEY]) - 1:
+            if len(msg.reasoning) > 0 and is_this_last and st.session_state[AGENT_STATUS] == AgentStatus.RUNNING:
                 with st.chat_message(
                         name='ai',
                         avatar="💡"
