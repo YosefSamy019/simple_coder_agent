@@ -64,12 +64,10 @@ class RunCommandTool(AgentTool):
             items = list(filter(lambda item: os.path.exists(item), items))
             st.session_state[FILES_SYSTEM] = items
 
-            return json.dumps(
-                {
-                    "output": output,
-                    "exit_code": error_code,
-                }
-            )
+            return f"""
+Exit_Code: {error_code}
+Output: {output}
+            """.strip()
 
         except Exception as e:
             return f"Error happened: {e}"
