@@ -24,7 +24,8 @@ class RunCommandTool(AgentTool):
                 },
                 "working_dir": {
                     "type": "string",
-                    "description": "Directory to run the command in",
+                    "description": "Directory to run the command in (defaults to '.')",
+                    "default": ".",
                 },
             },
             "required": ["command"],
@@ -32,13 +33,10 @@ class RunCommandTool(AgentTool):
 
     def execute(self, parameters: dict) -> str:
         command: str | None = parameters.get("command")
-        working_dir: str | None = parameters.get("working_dir")
+        working_dir: str = parameters.get("working_dir") or "."
 
         if not command:
             return "Error: `command` must be provided."
-
-        if not working_dir:
-            return "Error: `working_dir` must be provided."
 
         try:
             process = subprocess.Popen(
