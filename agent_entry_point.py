@@ -13,7 +13,7 @@ def main():
     build_chat()
     build_messages()
 
-    if is_goal_achieved():
+    if is_goal_achieved() and st.session_state[AGENT_STATUS] == AgentStatus.RUNNING:
         st.session_state[AGENT_STATUS] = AgentStatus.STOPPED
         st.rerun()
 
