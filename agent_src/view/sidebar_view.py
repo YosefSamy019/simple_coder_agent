@@ -1,8 +1,8 @@
 import streamlit as st
 
-from src.models.models import *
-from src.tools import get_all_tools_list
-from src.values.const import *
+from agent_src.models.models import *
+from agent_src.tools import get_all_tools_list
+from agent_src.values.const import *
 
 
 def build_sidebar():

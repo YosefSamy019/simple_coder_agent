@@ -1,7 +1,7 @@
-from src.view.agent_loop import is_goal_achieved, call_model
-from src.view.chat_view import build_chat, build_messages
-from src.view.init_view import init
-from src.view.sidebar_view import build_sidebar
+from agent_src.view.agent_loop import is_goal_achieved, call_model
+from agent_src.view.chat_view import build_chat, build_messages
+from agent_src.view.init_view import init
+from agent_src.view.sidebar_view import build_sidebar
 from tools import *
 
 

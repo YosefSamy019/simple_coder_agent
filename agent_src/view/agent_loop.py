@@ -3,10 +3,10 @@ import json
 from openai import OpenAI
 import streamlit as st
 
-from src.models.models import *
-from src.tools import get_all_tools_list, AgentTool
-from src.values.const import *
-from src.view.common import add_message
+from agent_src.models.models import *
+from agent_src.tools import get_all_tools_list, AgentTool
+from agent_src.values.const import *
+from agent_src.view.common import add_message
 
 
 def is_goal_achieved() -> bool:

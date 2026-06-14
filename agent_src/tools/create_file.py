@@ -1,8 +1,8 @@
 import os.path
 import streamlit as st
 
-from src.values.const import FILES_SYSTEM
-from src.tools.tools import AgentTool
+from agent_src.values.const import FILES_SYSTEM
+from agent_src.tools.tools import AgentTool
 
 
 class CreateFileTool(AgentTool):

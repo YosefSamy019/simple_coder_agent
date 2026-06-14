@@ -1,8 +1,8 @@
 import streamlit as st
 
-from src.models.models import *
-from src.tools import AgentTool
-from src.values.const import *
+from agent_src.models.models import *
+from agent_src.tools import AgentTool
+from agent_src.values.const import *
 
 
 def init():

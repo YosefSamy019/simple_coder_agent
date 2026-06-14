@@ -1,9 +1,9 @@
 import os.path
 import streamlit as st
 
-import src.values.const
-from src.models.models import AgentStatus
-from src.tools.tools import AgentTool
+import agent_src.values.const
+from agent_src.models.models import AgentStatus
+from agent_src.tools.tools import AgentTool
 
 
 class MarkFinishTool(AgentTool):

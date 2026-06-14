@@ -1,8 +1,8 @@
 import streamlit as st
 
-from src.models.models import *
-from src.values.const import *
-from src.view.common import add_message
+from agent_src.models.models import *
+from agent_src.values.const import *
+from agent_src.view.common import add_message
 
 
 def handle_input():

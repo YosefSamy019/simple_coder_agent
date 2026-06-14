@@ -1,5 +1,5 @@
-from src.models.models import ChatMsg
-from src.values.const import MSGS_KEY
+from agent_src.models.models import ChatMsg
+from agent_src.values.const import MSGS_KEY
 import streamlit as st
 
 def add_message(msg: ChatMsg):

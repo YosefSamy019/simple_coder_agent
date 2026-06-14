@@ -1,6 +1,6 @@
 import os.path
 
-from src.tools.tools import AgentTool
+from agent_src.tools.tools import AgentTool
 
 
 class EditFileTool(AgentTool):
