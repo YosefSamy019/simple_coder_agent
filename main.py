@@ -125,12 +125,12 @@ def build_sidebar():
 
 
 @st.dialog("File Viewer", width='large')
-def show_file(filepath: Path):
+def show_file(filepath):
     try:
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
 
-        st.code(content, language=filepath.suffix.lstrip("."))
+        st.code(content, language=filepath.split(".")[-1])
     except Exception as e:
         st.error(f"Could not open file: {e}")
 
