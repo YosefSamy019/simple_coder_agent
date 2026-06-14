@@ -65,7 +65,7 @@ class RunCommandTool(AgentTool):
             st.session_state[FILES_SYSTEM] = items
 
             return f"""
-Exit_Code: {error_code}
+Exit code: {error_code}
 Output: {output}
             """.strip()
 
