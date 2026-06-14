@@ -52,7 +52,7 @@ def build_messages():
                         name='ai',
                         avatar="💡"
                 ):
-                    st.markdown(msg.content)
+                    st.markdown(msg.reasoning)
 
         elif isinstance(msg, SystemChatMsg):
             with st.expander(label=f'⚙️ System Message'):
