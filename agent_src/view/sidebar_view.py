@@ -27,7 +27,7 @@ def build_sidebar():
             index=0,
             options=[
                 "gemma4:e2b",
-                "gemma4:26b",
+                "gemma4:12b",
                 "qwen2.5:3b"
             ]
         )
