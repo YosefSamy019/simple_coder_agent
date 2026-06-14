@@ -1,8 +1,8 @@
 import os.path
 import streamlit as st
 
-from const import FILES_SYSTEM
-from tools.tools import AgentTool
+from src.values.const import FILES_SYSTEM
+from src.tools.tools import AgentTool
 
 
 class ListDirTool(AgentTool):

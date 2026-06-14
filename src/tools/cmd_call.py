@@ -1,10 +1,9 @@
 import json
 import os
 import subprocess
-import streamlit as st
 
-from const import FILES_SYSTEM
-from tools.tools import AgentTool
+from src.values.const import FILES_SYSTEM
+from src.tools.tools import AgentTool
 import streamlit as st
 
 
