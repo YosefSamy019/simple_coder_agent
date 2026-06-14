@@ -309,6 +309,15 @@ def call_model():
 # =====================
 
 def main():
+    CreateFileTool().execute({
+        'filename':'ali.txt',
+        'content':'abs'
+    })
+    CreateFileTool().execute({
+        'filename':'a/moh.txt',
+        'content':'abs'
+    })
+
     init()
     build_sidebar()
     build_chat()
