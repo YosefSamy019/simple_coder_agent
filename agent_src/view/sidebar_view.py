@@ -24,10 +24,10 @@ def build_sidebar():
         cols_side_bar_a[1].selectbox(
             label="Model",
             key=MODEL_KEY,
-            index=1,
+            index=0,
             options=[
-                "qwen2.5-coder:14b",
                 "gemma4:e2b",
+                "gemma4:26b",
                 "qwen2.5:3b"
             ]
         )
