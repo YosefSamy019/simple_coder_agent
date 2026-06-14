@@ -19,7 +19,7 @@ def handle_input():
 def build_chat():
     st.title(f"🤖 My Simple Coder Agent")
 
-    st.markdown(f'# Model Calls: {st.session_state[CALLS_COUNTER]}')
+    st.markdown(f'N Model Calls: {st.session_state[CALLS_COUNTER]}')
 
     st.chat_input(
         "Ask the agent...",
