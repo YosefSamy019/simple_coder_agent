@@ -20,10 +20,13 @@ def is_goal_achieved() -> bool:
 
     assistant_msg = last_msg
 
+    if assistant_msg.content.strip().endswith("?"):
+        return True
+
     if len(assistant_msg.tool_calls) > 0:
         return False
 
-    if len(assistant_msg.reasoning) >= 0:
+    if len(assistant_msg.reasoning) >= 0 and len(assistant_msg.content) == 0:
         return False
 
     return True
