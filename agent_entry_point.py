@@ -1,8 +1,10 @@
+from agent_src.models.models import AgentStatus
+from agent_src.values.const import AGENT_STATUS
 from agent_src.view.agent_loop import is_goal_achieved, call_model
 from agent_src.view.chat_view import build_chat, build_messages
 from agent_src.view.init_view import init
 from agent_src.view.sidebar_view import build_sidebar
-from tools import *
+import streamlit as st
 
 
 def main():
