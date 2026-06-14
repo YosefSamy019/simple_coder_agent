@@ -7,8 +7,6 @@ from models import AgentStatus
 
 
 class AgentTool(ABC):
-    WORKING_DIR = 'agent_work_dir'
-
     @abstractmethod
     def get_name(self) -> str:
         raise NotImplementedError

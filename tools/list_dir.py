@@ -1,5 +1,7 @@
 import os.path
+import streamlit as st
 
+from const import FILES_SYSTEM
 from tools.tools import AgentTool
 
 
@@ -16,16 +18,14 @@ class ListDirTool(AgentTool):
     def execute(self, parameters: dict) -> str:
 
         try:
-            os.makedirs(super().WORKING_DIR, exist_ok=True)
-            items = os.listdir(super().WORKING_DIR)
+            items = st.session_state[FILES_SYSTEM]
 
             if not items:
                 return f"Directory is empty."
 
             result = f"Contents of directory:\n"
-            for root, _, files in os.walk(super().WORKING_DIR):
-                for file in files:
-                    result = result + f"- {os.path.join(root, file)}\n"
+
+            result += '\n'.join([f"- " + x for x in items])
 
             return result.strip()
 

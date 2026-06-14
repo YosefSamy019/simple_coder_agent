@@ -1,5 +1,7 @@
 import os.path
+import streamlit as st
 
+from const import FILES_SYSTEM
 from tools.tools import AgentTool
 
 
@@ -49,6 +51,9 @@ class CreateFileTool(AgentTool):
 
             with open(total_path, "w", encoding="utf-8") as f:
                 f.write(content)
+
+            st.session_state[FILES_SYSTEM].append(total_path)
+
 
             return f"File {filename} successfully created."
 

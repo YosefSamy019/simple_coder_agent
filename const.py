@@ -9,3 +9,4 @@ CHAT_KEY = "chat_input"
 MSGS_KEY = "messages"
 AGENT_STATUS = 'agent_status'
 CALLS_COUNTER = 'calls_counter'
+FILES_SYSTEM = 'files_system'

@@ -1,7 +1,11 @@
 import json
+import os
 import subprocess
 import streamlit as st
+
+from const import FILES_SYSTEM
 from tools.tools import AgentTool
+import streamlit as st
 
 
 class RunCommandTool(AgentTool):
@@ -57,6 +61,11 @@ class RunCommandTool(AgentTool):
                         + "\n\n[...content clipped...]\n\n"
                         + output[-1000:]
                 )
+
+            # filter files
+            items = st.session_state[FILES_SYSTEM]
+            items = list(filter(lambda item: os.path.exists(item), items))
+            st.session_state[FILES_SYSTEM] = items
 
             return json.dumps(
                 {

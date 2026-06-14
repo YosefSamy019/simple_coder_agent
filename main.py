@@ -22,6 +22,7 @@ def init():
     st.session_state.setdefault(URL_KEY, 'https://ed32-34-142-231-234.ngrok-free.app')
     st.session_state.setdefault(END_POINT_KEY, '/v1')
     st.session_state.setdefault(CALLS_COUNTER, 0)
+    st.session_state.setdefault(FILES_SYSTEM, [])
 
     st.session_state.setdefault(AGENT_STATUS, AgentStatus.STOPPED)
 
@@ -39,8 +40,7 @@ For each user request:
 3. Use your tools to gather information about the codebase when needed
 4. Implement solutions by writing or modifying code
 5. Explain your reasoning and approach
-6. You must put all created files in folder `{AgentTool.WORKING_DIR}`, Dont go outside.
-7. Call `deliver_task` when you finish the task
+6. Call `deliver_task` when you finish the task
 
 When modifying code, be careful to maintain the existing style and structure. Test your changes when possible.
 If you're unsure about something, ask clarifying questions before proceeding.
@@ -99,13 +99,7 @@ def build_sidebar():
                 )
             )
         if btn_cols_1[1].button("Clear Directory"):
-            directory = Path(AgentTool.WORKING_DIR)
-
-            for item in directory.iterdir():
-                if item.is_dir():
-                    shutil.rmtree(item)
-                else:
-                    item.unlink()
+            st.session_state[FILES_SYSTEM] = []
 
         if btn_cols_2[0].button("Show Tools"):
             @st.dialog(title="Tools", width='large')
@@ -127,7 +121,7 @@ def build_sidebar():
 
         st.title("📂 File Explorer")
 
-        render_tree(Path(AgentTool.WORKING_DIR))
+        render_tree()
 
 
 @st.dialog("File Viewer", width='large')
@@ -141,24 +135,22 @@ def show_file(filepath: Path):
         st.error(f"Could not open file: {e}")
 
 
-def render_tree(path: Path, level=0):
-    items = sorted(
-        path.iterdir(),
-        key=lambda p: (p.is_file(), p.name.lower())
-    )
+def render_tree(level=0):
+    items = st.session_state[FILES_SYSTEM]
 
     for item in items:
         if item.is_dir():
-            st.markdown("&nbsp;" * level * 4 + f"📁 **{item.name}**",
-                        unsafe_allow_html=True)
-            render_tree(item, level + 1)
+            # st.markdown("&nbsp;" * level * 4 + f"📁 **{item.name}**",
+            #             unsafe_allow_html=True)
+            # render_tree(level + 1)
+            pass
 
         else:
             cols = st.columns([6, 1, 1])
 
             indent = "&nbsp;" * level * 4
             cols[0].markdown(
-                indent + f"📄 {item.name}",
+                indent + f"📄 {item}",
                 unsafe_allow_html=True,
             )
 
@@ -167,7 +159,7 @@ def render_tree(path: Path, level=0):
                     st.download_button(
                         "📥",
                         data=f.read(),
-                        file_name=item.name,
+                        file_name=item,
                         key=f"download_{item}",
                     )
 
