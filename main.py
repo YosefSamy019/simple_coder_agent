@@ -309,8 +309,6 @@ def call_model():
 # =====================
 
 def main():
-    os.makedirs(AgentTool.WORKING_DIR, exist_ok=True)
-
     init()
     build_sidebar()
     build_chat()
