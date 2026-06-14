@@ -1,10 +1,10 @@
-import json
 import os
 import subprocess
 
-from agent_src.values.const import FILES_SYSTEM
-from agent_src.tools.tools import AgentTool
 import streamlit as st
+
+from agent_src.tools.tools import AgentTool
+from agent_src.values.const import FILES_SYSTEM
 
 
 class RunCommandTool(AgentTool):
@@ -12,7 +12,17 @@ class RunCommandTool(AgentTool):
         return "run_command"
 
     def get_description(self) -> str:
-        return "Run a shell command in a working directory and return its output."
+        return """
+Run a shell command and return its result.
+
+Recommended workflow:
+1. Create/Edit files.
+2. Run the command.
+3. Inspect the output.
+4. Fix errors if needed.
+
+Returns structured results for easier agent recovery.
+"""
 
     def get_parameters(self) -> dict:
         return {
@@ -20,54 +30,115 @@ class RunCommandTool(AgentTool):
             "properties": {
                 "command": {
                     "type": "string",
-                    "description": "Shell command to execute",
+                    "description": "Shell command to execute.",
                 },
                 "working_dir": {
                     "type": "string",
-                    "description": "Directory to run the command in (defaults to '.')",
+                    "description": "Working directory.",
                     "default": ".",
+                },
+                "timeout": {
+                    "type": "integer",
+                    "description": "Maximum execution time in seconds.",
+                    "default": 30,
                 },
             },
             "required": ["command"],
         }
 
-    def execute(self, parameters: dict) -> str:
-        command: str | None = parameters.get("command")
-        working_dir: str = parameters.get("working_dir") or "."
+    def execute(self, parameters: dict) -> dict:
+        command = parameters.get("command")
+        working_dir = parameters.get("working_dir", ".")
+        timeout = parameters.get("timeout", 30)
 
         if not command:
-            return "Error: `command` must be provided."
+            return {
+                "success": False,
+                "error": "missing_required_field",
+                "field": "command",
+                "message": "command is required",
+            }
+
+        if not os.path.isdir(working_dir):
+            return {
+                "success": False,
+                "error": "working_directory_not_found",
+                "working_dir": working_dir,
+            }
 
         try:
-            process = subprocess.Popen(
+            result = subprocess.run(
                 command,
                 shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
                 cwd=working_dir,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
             )
 
-            output, _ = process.communicate()
-            error_code = process.returncode
+            stdout = result.stdout or ""
+            stderr = result.stderr or ""
 
-            # Clip long output
-            if output and len(output) > 2000:
-                output = (
-                        output[:1000]
-                        + "\n\n[...content clipped...]\n\n"
-                        + output[-1000:]
+            MAX_OUTPUT = 4000
+
+            clipped = False
+
+            if len(stdout) > MAX_OUTPUT:
+                stdout = (
+                    stdout[:2000]
+                    + "\n\n... OUTPUT CLIPPED ...\n\n"
+                    + stdout[-2000:]
                 )
+                clipped = True
 
-            # filter files
-            items = st.session_state[FILES_SYSTEM]
-            items = list(filter(lambda item: os.path.exists(item), items))
-            st.session_state[FILES_SYSTEM] = items
+            if len(stderr) > MAX_OUTPUT:
+                stderr = (
+                    stderr[:2000]
+                    + "\n\n... ERROR CLIPPED ...\n\n"
+                    + stderr[-2000:]
+                )
+                clipped = True
 
-            return f"""
-Exit code: {error_code}
-Output: {output}
-            """.strip()
+            try:
+                items = st.session_state.get(FILES_SYSTEM, [])
+                items = [
+                    item
+                    for item in items
+                    if os.path.exists(item)
+                ]
+                st.session_state[FILES_SYSTEM] = items
+            except Exception:
+                pass
+
+            return {
+                "success": result.returncode == 0,
+                "exit_code": result.returncode,
+                "command": command,
+                "working_dir": working_dir,
+                "stdout": stdout,
+                "stderr": stderr,
+                "output_clipped": clipped,
+            }
+
+        except subprocess.TimeoutExpired:
+            return {
+                "success": False,
+                "error": "timeout",
+                "command": command,
+                "timeout": timeout,
+            }
+
+        except PermissionError:
+            return {
+                "success": False,
+                "error": "permission_denied",
+                "command": command,
+            }
 
         except Exception as e:
-            return f"Error happened: {e}"
+            return {
+                "success": False,
+                "error": "unexpected_error",
+                "command": command,
+                "message": str(e),
+            }

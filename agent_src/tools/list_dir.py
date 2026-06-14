@@ -1,8 +1,8 @@
-import os.path
+import os
 import streamlit as st
 
-from agent_src.values.const import FILES_SYSTEM
 from agent_src.tools.tools import AgentTool
+from agent_src.values.const import FILES_SYSTEM
 
 
 class ListDirTool(AgentTool):
@@ -10,24 +10,50 @@ class ListDirTool(AgentTool):
         return "list_directory"
 
     def get_description(self) -> str:
-        return "List the contents of the directory."
+        return """
+List files currently tracked by the agent.
+
+Useful for:
+- checking project structure,
+- finding created files,
+- verifying file existence.
+
+Returns structured data.
+"""
 
     def get_parameters(self) -> dict:
-        return None
+        return {
+            "type": "object",
+            "properties": {},
+        }
 
-    def execute(self, parameters: dict) -> str:
-
+    def execute(self, parameters: dict) -> dict:
         try:
-            items = st.session_state[FILES_SYSTEM]
+            files = st.session_state.get(
+                FILES_SYSTEM,
+                []
+            )
 
-            if not items:
-                return f"Directory is empty."
+            # Remove stale entries
+            files = [
+                f
+                for f in files
+                if os.path.exists(f)
+            ]
 
-            result = f"Contents of directory:\n"
+            files = sorted(set(files))
 
-            result += '\n'.join([f"- " + x for x in items])
+            st.session_state[FILES_SYSTEM] = files
 
-            return result.strip()
+            return {
+                "success": True,
+                "count": len(files),
+                "files": files,
+            }
 
         except Exception as e:
-            return f"Error: {e}"
+            return {
+                "success": False,
+                "error": "unexpected_error",
+                "message": str(e),
+            }

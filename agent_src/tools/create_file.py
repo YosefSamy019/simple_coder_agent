@@ -1,8 +1,8 @@
-import os.path
+import os
 import streamlit as st
 
-from agent_src.values.const import FILES_SYSTEM
 from agent_src.tools.tools import AgentTool
+from agent_src.values.const import FILES_SYSTEM
 
 
 class CreateFileTool(AgentTool):
@@ -10,7 +10,17 @@ class CreateFileTool(AgentTool):
         return "create_file"
 
     def get_description(self) -> str:
-        return "Create a new file with the provided content or replace an existing one."
+        return """
+Create or overwrite a file.
+
+The tool:
+- creates parent directories if needed,
+- writes UTF-8 text,
+- overwrites existing files,
+- tracks created files.
+
+Returns structured results for agent recovery.
+"""
 
     def get_parameters(self) -> dict:
         return {
@@ -18,45 +28,115 @@ class CreateFileTool(AgentTool):
             "properties": {
                 "filename": {
                     "type": "string",
-                    "description": "The name of the file to create.",
+                    "description": "Path of the file to create.",
                 },
                 "content": {
                     "type": "string",
-                    "description": "The content to write into the file.",
+                    "description": "UTF-8 text to write.",
+                },
+                "overwrite": {
+                    "type": "boolean",
+                    "description": "Overwrite existing file.",
+                    "default": True,
                 },
             },
-            "required": ["filename", "content"],
+            "required": [
+                "filename",
+                "content",
+            ],
         }
 
-    def execute(self, parameters: dict) -> str:
-        filename: str | None = parameters.get("filename")
-        content: str | None = parameters.get("content")
+    def execute(self, parameters: dict) -> dict:
+        filename = parameters.get("filename")
+        content = parameters.get("content")
+        overwrite = parameters.get("overwrite", True)
 
-        if filename is None:
-            return "Error: field `filename` must be provided."
+        # --------------------
+        # Validation
+        # --------------------
+
+        if not filename:
+            return {
+                "success": False,
+                "error": "missing_required_field",
+                "field": "filename",
+                "message": "filename is required",
+            }
 
         if content is None:
-            return "Error: field `content` must be provided."
+            return {
+                "success": False,
+                "error": "missing_required_field",
+                "field": "content",
+                "message": "content is required",
+            }
 
         try:
             total_path = filename
 
-            # Create parent directories if necessary
-            parent_dir = os.path.dirname(total_path)
-            if parent_dir:
-                os.makedirs(parent_dir, exist_ok=True)
+            parent = os.path.dirname(total_path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
 
-            # if os.path.exists(total_path):
-            #     return f"File {filename} already exists."
+            existed = os.path.exists(total_path)
 
-            with open(total_path, "w", encoding="utf-8") as f:
+            if existed and not overwrite:
+                return {
+                    "success": False,
+                    "error": "file_exists",
+                    "filename": total_path,
+                }
+
+            with open(
+                total_path,
+                "w",
+                encoding="utf-8",
+            ) as f:
                 f.write(content)
 
-            st.session_state[FILES_SYSTEM].append(total_path)
-            st.session_state[FILES_SYSTEM] = list(set(st.session_state[FILES_SYSTEM]))
+            try:
+                files = st.session_state.get(
+                    FILES_SYSTEM,
+                    []
+                )
 
+                if total_path not in files:
+                    files.append(total_path)
 
-            return f"File {filename} successfully created."
+                st.session_state[FILES_SYSTEM] = files
+
+            except Exception:
+                pass
+
+            return {
+                "success": True,
+                "filename": total_path,
+                "created": not existed,
+                "overwritten": existed,
+                "bytes_written": len(
+                    content.encode("utf-8")
+                ),
+                "characters_written": len(content),
+            }
+
+        except PermissionError:
+            return {
+                "success": False,
+                "error": "permission_denied",
+                "filename": filename,
+            }
+
+        except UnicodeEncodeError:
+            return {
+                "success": False,
+                "error": "encoding_error",
+                "filename": filename,
+            }
 
         except Exception as e:
-            return f"An error occurred while creating {filename}: {e}"
+            return {
+                "success": False,
+                "error": "unexpected_error",
+                "filename": filename,
+                "message": str(e),
+            }

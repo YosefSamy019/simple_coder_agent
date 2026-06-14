@@ -20,7 +20,7 @@ class AgentTool(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def execute(self, parameters: dict) -> str:
+    def execute(self, parameters: dict) -> dict:
         raise NotImplementedError
 
 

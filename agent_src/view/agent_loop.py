@@ -71,6 +71,9 @@ def call_model():
                     result = tool_obj.execute(parameters=function_arguments)
                     break
 
+            if isinstance(result, dict):
+                result = json.dumps(result)
+
             add_message(
                 ToolCallChatMsg(
                     tool_call_id=tool_call_id,
