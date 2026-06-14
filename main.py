@@ -139,13 +139,6 @@ def render_tree(level=0):
     items = st.session_state[FILES_SYSTEM]
 
     for item in items:
-        if item.is_dir():
-            # st.markdown("&nbsp;" * level * 4 + f"📁 **{item.name}**",
-            #             unsafe_allow_html=True)
-            # render_tree(level + 1)
-            pass
-
-        else:
             cols = st.columns([6, 1, 1])
 
             indent = "&nbsp;" * level * 4
