@@ -10,3 +10,4 @@ MSGS_KEY = "messages"
 AGENT_STATUS = 'agent_status'
 CALLS_COUNTER = 'calls_counter'
 FILES_SYSTEM = 'files_system'
+API_WARNING = 'api_warning'

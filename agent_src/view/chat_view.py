@@ -20,6 +20,8 @@ def build_chat():
     st.title(f"🤖 My Simple Coder Agent")
 
     st.markdown(f'N Model Calls: {st.session_state[CALLS_COUNTER]}')
+    if st.session_state[API_WARNING]:
+        st.warning("Please update the API URL before using the agent, Open the sidebar to update it")
 
     st.chat_input(
         "Ask the agent...",

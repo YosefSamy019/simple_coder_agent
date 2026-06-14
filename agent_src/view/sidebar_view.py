@@ -5,6 +5,10 @@ from agent_src.tools import get_all_tools_list
 from agent_src.values.const import *
 
 
+def _disable_warning():
+    st.session_state[API_WARNING] = False
+
+
 def build_sidebar():
     with st.sidebar:
         st.title("⚙️ Settings")
@@ -12,6 +16,7 @@ def build_sidebar():
         st.text_input(
             label="API URL",
             key=URL_KEY,
+            on_change=_disable_warning
         )
 
         cols_side_bar_a = st.columns(2)

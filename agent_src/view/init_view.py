@@ -15,6 +15,7 @@ def init():
     st.session_state.setdefault(END_POINT_KEY, '/v1')
     st.session_state.setdefault(CALLS_COUNTER, 0)
     st.session_state.setdefault(FILES_SYSTEM, [])
+    st.session_state.setdefault(API_WARNING, True)
 
     st.session_state.setdefault(AGENT_STATUS, AgentStatus.STOPPED)
 

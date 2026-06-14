@@ -84,7 +84,7 @@ def call_model():
             )
 
     except Exception as e:
-        raise e
+        # raise e
         st.error(e)
 
     finally:
