@@ -10,19 +10,23 @@ from agent_src.view.common import add_message
 
 
 def is_goal_achieved() -> bool:
-    return False
-    if len(st.session_state.get(MSGS_KEY)) > 2:
-        last_1_msg = st.session_state.get(MSGS_KEY)[-1]
-        last_2_msg = st.session_state.get(MSGS_KEY)[-2]
+    if len(st.session_state.get(MSGS_KEY)) == 0:
+        return False
 
-        if isinstance(last_1_msg, AssistantChatMsg) and len(last_1_msg.tool_calls) == 0:
-            return True
+    last_msg = st.session_state.get(MSGS_KEY)[-1]
 
-        # if isinstance(last_1_msg, AssistantChatMsg) and isinstance(last_2_msg, AssistantChatMsg):
-        #     if len(last_1_msg.tool_calls) == 0 and len(last_2_msg.tool_calls) == 0:
-        #         return True
+    if not isinstance(last_msg, AssistantChatMsg):
+        return False
 
-    return False
+    assistant_msg = last_msg
+
+    if len(assistant_msg.tool_calls) > 0:
+        return False
+
+    if len(assistant_msg.reasoning) >= 0:
+        return False
+
+    return True
 
 
 def call_model():
