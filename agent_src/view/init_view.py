@@ -11,7 +11,7 @@ def init():
         layout="wide",
     )
 
-    st.session_state.setdefault(URL_KEY, 'https://668e-34-169-186-23.ngrok-free.app')
+    st.session_state.setdefault(URL_KEY, 'https://eb9d-34-169-186-23.ngrok-free.app')
     st.session_state.setdefault(END_POINT_KEY, '/v1')
     st.session_state.setdefault(CALLS_COUNTER, 0)
     st.session_state.setdefault(FILES_SYSTEM, [])
