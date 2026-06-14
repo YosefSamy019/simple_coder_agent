@@ -149,10 +149,13 @@ def render_tree(level=0):
 
         with cols[1]:
             with open(item, "rb") as f:
+                download_name = item
+                if '/' in download_name:
+                    download_name = download_name.split('/')[-1]
                 st.download_button(
                     "📥",
                     data=f.read(),
-                    file_name=item,
+                    file_name=download_name,
                     key=f"download_{item}",
                 )
 
