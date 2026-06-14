@@ -19,6 +19,7 @@ def main():
 
     if st.session_state.get(AGENT_STATUS) == AgentStatus.RUNNING:
         call_model()
+        st.rerun()
 
 
 if __name__ == "__main__":
