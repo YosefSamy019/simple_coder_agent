@@ -1,7 +1,7 @@
 import os.path
 import streamlit as st
 
-import agent_src.values.const
+from agent_src.values.const import AGENT_STATUS
 from agent_src.models.models import AgentStatus
 from agent_src.tools.tools import AgentTool
 
@@ -19,7 +19,7 @@ class MarkFinishTool(AgentTool):
     def execute(self, parameters: dict) -> str:
 
         try:
-            st.session_state[const.AGENT_STATUS] = AgentStatus.STOPPED
+            st.session_state[AGENT_STATUS] = AgentStatus.STOPPED
             return "Task is delivered successfully"
 
         except Exception as e:
