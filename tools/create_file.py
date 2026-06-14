@@ -53,6 +53,7 @@ class CreateFileTool(AgentTool):
                 f.write(content)
 
             st.session_state[FILES_SYSTEM].append(total_path)
+            st.session_state[FILES_SYSTEM] = list(set(st.session_state[FILES_SYSTEM]))
 
 
             return f"File {filename} successfully created."

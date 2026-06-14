@@ -139,30 +139,30 @@ def render_tree(level=0):
     items = st.session_state[FILES_SYSTEM]
 
     for item in items:
-            cols = st.columns([6, 1, 1])
+        cols = st.columns([6, 1, 1])
 
-            indent = "&nbsp;" * level * 4
-            cols[0].markdown(
-                indent + f"📄 {item}",
-                unsafe_allow_html=True,
-            )
+        indent = "&nbsp;" * level * 4
+        cols[0].markdown(
+            indent + f"📄 {item}",
+            unsafe_allow_html=True,
+        )
 
-            with cols[1]:
-                with open(item, "rb") as f:
-                    st.download_button(
-                        "📥",
-                        data=f.read(),
-                        file_name=item,
-                        key=f"download_{item}",
-                    )
+        with cols[1]:
+            with open(item, "rb") as f:
+                st.download_button(
+                    "📥",
+                    data=f.read(),
+                    file_name=item,
+                    key=f"download_{item}",
+                )
 
-            with cols[2]:
-                if st.button(
-                        "👁",
-                        key=f"view_{item}",
-                        help="View file",
-                ):
-                    show_file(item)
+        with cols[2]:
+            if st.button(
+                    "👁",
+                    key=f"view_{item}",
+                    help="View file",
+            ):
+                show_file(item)
 
 
 # =====================
@@ -303,12 +303,12 @@ def call_model():
 
 def main():
     CreateFileTool().execute({
-        'filename':'ali.txt',
-        'content':'abs'
+        'filename': 'ali.txt',
+        'content': 'abs'
     })
     CreateFileTool().execute({
-        'filename':'a/moh.txt',
-        'content':'abs'
+        'filename': 'a/moh.txt',
+        'content': 'abs'
     })
 
     init()
