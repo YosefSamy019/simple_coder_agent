@@ -17,7 +17,9 @@ def handle_input():
 
 
 def build_chat():
-    st.title(f"🤖 My Simple Coder Agent ({st.session_state[CALLS_COUNTER]})")
+    st.title(f"🤖 My Simple Coder Agent")
+
+    st.info(f'# Model Calls: {st.session_state[CALLS_COUNTER]}')
 
     st.chat_input(
         "Ask the agent...",
