@@ -29,7 +29,7 @@ def build_chat():
 
 
 def build_messages():
-    for msg in st.session_state[MSGS_KEY]:
+    for i, msg in enumerate(st.session_state[MSGS_KEY]):
         if isinstance(msg, UserChatMsg):
             with st.chat_message(
                     name='human',
@@ -38,26 +38,32 @@ def build_messages():
                 st.markdown(msg.content)
 
         elif isinstance(msg, AssistantChatMsg):
-            with st.chat_message(
-                    name='ai',
-                    avatar="🤖"
-            ):
-                st.markdown(msg.content)
-                st.markdown(msg.reasoning)
+            if len(msg.content) > 0:
+                with st.chat_message(
+                        name='ai',
+                        avatar="🤖"
+                ):
+                    st.markdown(msg.content)
+
+            if len(msg.reasoning) > 0 and i == len(st.session_state[MSGS_KEY]) - 1:
+                with st.chat_message(
+                        name='ai',
+                        avatar="💡"
+                ):
+                    st.markdown(msg.content)
 
         elif isinstance(msg, SystemChatMsg):
-            with st.container(border=True):
-                # st.markdown('⚙️ System Message: ```Hidden```')
+            with st.expander(label=f'⚙️ System Message'):
                 st.markdown(msg.content)
 
 
         elif isinstance(msg, ToolCallChatMsg):
-            with st.expander(label=f'💻 {msg.function_name} {msg.result[:300]}'):
-                st.markdown(f"call id: {msg.tool_call_id}")
-                st.markdown(f"function: {msg.function_name}")
-                st.markdown(f"args: {msg.function_arguments}")
+            with st.expander(label=f'🔨 {msg.function_name} {msg.result[:150]}'):
+                st.markdown(f"```call id:``` {msg.tool_call_id}")
+                st.markdown(f"```function:``` {msg.function_name}")
+                st.markdown(f"```args:``` {msg.function_arguments}")
                 st.divider()
-                st.markdown(f"result:")
+                st.markdown(f"```result:```")
                 st.markdown(f"{msg.result}")
         else:
             st.error(f"Unknown message, type{type(msg)}")
