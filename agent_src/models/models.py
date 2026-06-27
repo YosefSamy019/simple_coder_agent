@@ -8,6 +8,8 @@ class AgentStatus(Enum):
 
 
 class ChatMsg(ABC):
+    def __init__(self):
+        self.expired = False
 
     @abstractmethod
     def to_json(self) -> dict:
@@ -16,6 +18,7 @@ class ChatMsg(ABC):
 
 class UserChatMsg(ChatMsg):
     def __init__(self, content: str):
+        super().__init__()
         self.content = content
 
     def to_json(self) -> dict:
@@ -24,6 +27,8 @@ class UserChatMsg(ChatMsg):
 
 class AssistantChatMsg(ChatMsg):
     def __init__(self, content: str, reasoning: str, tool_calls: list, dump):
+        super().__init__()
+
         self.content = content if content else ""
         self.reasoning = reasoning if reasoning else ''
         self.dump = dump
@@ -42,12 +47,12 @@ class AssistantChatMsg(ChatMsg):
 
     def to_json(self) -> dict:
         return self.dump
-        return {"role": 'assistant', "content": self.content}
-        return {"role": 'assistant', "content": self.content, "tool_calls": self.tool_calls}
 
 
 class SystemChatMsg(ChatMsg):
     def __init__(self, content: str):
+        super().__init__()
+
         self.content = content
 
     def to_json(self) -> dict:
@@ -56,6 +61,8 @@ class SystemChatMsg(ChatMsg):
 
 class ToolCallChatMsg(ChatMsg):
     def __init__(self, tool_call_id, function_name: str, function_arguments: dict, result: str):
+        super().__init__()
+
         self.function_name = function_name
         self.tool_call_id = tool_call_id
         self.function_arguments = function_arguments

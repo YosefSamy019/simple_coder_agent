@@ -1,5 +1,6 @@
 import streamlit as st
 
+from agent_src.functions import get_active_chat_msgs
 from agent_src.models.models import *
 from agent_src.values.const import *
 from agent_src.view.common import add_message
@@ -19,7 +20,12 @@ def handle_input():
 def build_chat():
     st.title(f"🤖 My Simple Coder Agent")
 
-    st.markdown(f'N Model Calls: {st.session_state[CALLS_COUNTER]}')
+    st.markdown(
+        f'`Model Calls`: {st.session_state[CALLS_COUNTER]} '
+        f'`Buffer Length`: {len(st.session_state[MSGS_KEY])} '
+        f'`Active Buffer Length`: {len(get_active_chat_msgs())} '
+
+    )
     if st.session_state[API_WARNING]:
         st.warning("Please update the API URL before using the agent, Open the sidebar to update it")
 
@@ -39,6 +45,9 @@ def build_messages():
                     name='human',
                     avatar="👤"
             ):
+                if msg.expired:
+                    st.warning("Expired")
+
                 st.markdown(msg.content)
 
         elif isinstance(msg, AssistantChatMsg):
@@ -47,6 +56,8 @@ def build_messages():
                         name='ai',
                         avatar="🤖"
                 ):
+                    if msg.expired:
+                        st.warning("Expired")
                     st.markdown(msg.content)
 
             if len(msg.reasoning) > 0 and is_this_last and st.session_state[AGENT_STATUS] == AgentStatus.RUNNING:
@@ -54,16 +65,24 @@ def build_messages():
                         name='ai',
                         avatar="💡"
                 ):
+                    if msg.expired:
+                        st.warning("Expired")
+
                     st.markdown('```Reasoning```')
                     st.markdown(msg.reasoning)
 
         elif isinstance(msg, SystemChatMsg):
             with st.expander(label=f'⚙️ System Message'):
+                if msg.expired:
+                    st.warning("Expired")
                 st.markdown(msg.content)
 
 
         elif isinstance(msg, ToolCallChatMsg):
             with st.expander(label=f'🔨 ```{msg.function_name}``` {msg.result[:150]}'):
+                if msg.expired:
+                    st.warning("Expired")
+
                 st.markdown(f"```call id:``` {msg.tool_call_id}")
                 st.markdown(f"```function:``` {msg.function_name}")
                 st.markdown(f"```args:``` {msg.function_arguments}")

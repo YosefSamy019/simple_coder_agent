@@ -3,6 +3,7 @@ import json
 from openai import OpenAI
 import streamlit as st
 
+from agent_src.functions import get_active_chat_msgs
 from agent_src.models.models import *
 from agent_src.tools import get_all_tools_list, AgentTool
 from agent_src.values.const import *
@@ -44,7 +45,7 @@ def call_model():
         completion = client.chat.completions.create(
             model=st.session_state.get(MODEL_KEY),
             messages=[
-                m.to_json() for m in st.session_state.get(MSGS_KEY)
+                m.to_json() for m in get_active_chat_msgs()
             ],
             tools=get_all_tools_list(),
         )
@@ -90,3 +91,56 @@ def call_model():
 
     finally:
         pass
+
+
+def mark_expired_msgs():
+    msgs = st.session_state.get(MSGS_KEY)
+
+    start_expiring = len(msgs) - 10
+
+    # Remove all reasoning msgs when model gives an answer
+    def stage_1():
+        flag_remove_reasoning = False
+
+        for i in range(start_expiring, -1, -1):
+            if isinstance(msgs[i], AssistantChatMsg):
+                if msgs[i].content != "":
+                    flag_remove_reasoning = True
+
+                if flag_remove_reasoning:
+                    if msgs[i].reasoning != "":
+                        msgs[i].expired = True
+
+    # Remove old tools messages before user messages
+    def stage_2():
+        flag_remove_tools = False
+
+        for i in range(start_expiring, -1, -1):
+            if isinstance(msgs[i], UserChatMsg):
+                flag_remove_tools = True
+
+            if flag_remove_tools and isinstance(msgs[i], ToolCallChatMsg):
+                msgs[i].expired = True
+
+    # Remove duplicated tools calls with same name&args
+    def stage_3():
+        discovered_meta_data = set()
+
+        for i in range(start_expiring, -1, -1):
+            if isinstance(msgs[i], ToolCallChatMsg):
+                meta_data_i = "{}#{}".format(
+                    msgs[i].function_name,
+                    json.dumps(
+                        msgs[i].function_arguments,
+                        sort_keys=True,
+                    )
+                )
+
+                if meta_data_i in discovered_meta_data:
+                    msgs[i].expired = True
+                else:
+                    discovered_meta_data.add(meta_data_i)
+
+    stage_1()
+    stage_2()
+    stage_3()

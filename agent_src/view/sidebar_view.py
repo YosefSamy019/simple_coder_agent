@@ -9,7 +9,9 @@ def _disable_warning():
     st.session_state[API_WARNING] = False
 
 
-def build_sidebar():
+def build_sidebar(
+        clear_chat_func,
+):
     with st.sidebar:
         st.title("⚙️ Settings")
 
@@ -31,9 +33,7 @@ def build_sidebar():
             key=MODEL_KEY,
             index=0,
             options=[
-                "gemma4:12b",
-                "gemma4:e2b",
-                "qwen2.5:3b"
+                "gemma4:12b"
             ]
         )
 
@@ -42,24 +42,20 @@ def build_sidebar():
         btn_cols_1 = st.columns(2)
         btn_cols_2 = st.columns(2)
 
-        if btn_cols_1[0].button("Clear Chat"):
-            st.session_state[MSGS_KEY] = list(
-                filter(
-                    lambda x: isinstance(x, SystemChatMsg),
-                    st.session_state[MSGS_KEY]
-                )
-            )
-        if btn_cols_1[1].button("Clear Directory"):
+        if btn_cols_1[0].button("Clear Chat", width='stretch') and clear_chat_func:
+            clear_chat_func()
+
+        if btn_cols_1[1].button("Clear Directory", width='stretch'):
             st.session_state[FILES_SYSTEM] = []
 
-        if btn_cols_2[0].button("Show Tools"):
+        if btn_cols_2[0].button("Show Tools", width='stretch'):
             @st.dialog(title="Tools", width='large')
             def dialog():
                 st.write(get_all_tools_list())
 
             dialog()
 
-        if btn_cols_2[1].button("Show Buffer"):
+        if btn_cols_2[1].button("Show Buffer", width='stretch'):
             @st.dialog(title="Tools", width='large')
             def dialog():
                 st.write([
@@ -71,6 +67,48 @@ def build_sidebar():
         st.divider()
 
         st.title("📂 File Explorer")
+
+        uploaded_files = st.file_uploader(
+            label="Upload Files",
+            accept_multiple_files=True,
+            type=[
+                "txt",
+                "md",
+                "csv",
+                "json",
+                "xml",
+                "yaml",
+                "yml",
+                "ini",
+                "cfg",
+                "conf",
+                "log",
+                "py",
+                "js",
+                "ts",
+                "java",
+                "c",
+                "cpp",
+                "cc",
+                "h",
+                "hpp",
+                "cs",
+                "go",
+                "rs",
+                "sh",
+                "bat",
+                "ps1",
+                "html",
+                "css",
+                "sql",
+                "toml",
+                "tex",
+                "rtf",
+            ],
+        )
+
+        if uploaded_files:
+            handle_uploaded_file(uploaded_files)
 
         render_tree()
 
@@ -117,3 +155,23 @@ def render_tree(level=0):
                     help="View file",
             ):
                 show_file(item)
+
+
+def handle_uploaded_file(files_list):
+    for file in files_list:
+        data = file.read()
+        total_path = file.name
+        file_name = file.name
+
+        with open(f'{total_path}', "wb") as f:
+            f.write(data)
+
+        files = st.session_state.get(
+            FILES_SYSTEM,
+            []
+        )
+
+        if total_path not in files:
+            files.append(total_path)
+
+        st.session_state[FILES_SYSTEM] = files

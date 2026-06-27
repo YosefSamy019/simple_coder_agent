@@ -1,6 +1,7 @@
+from agent_src.functions import clear_msgs_buffer
 from agent_src.models.models import AgentStatus
 from agent_src.values.const import AGENT_STATUS
-from agent_src.view.agent_loop import is_goal_achieved, call_model
+from agent_src.view.agent_loop import is_goal_achieved, call_model, mark_expired_msgs
 from agent_src.view.chat_view import build_chat, build_messages
 from agent_src.view.init_view import init
 from agent_src.view.sidebar_view import build_sidebar
@@ -9,7 +10,9 @@ import streamlit as st
 
 def main():
     init()
-    build_sidebar()
+    build_sidebar(
+        clear_chat_func=clear_msgs_buffer
+    )
     build_chat()
     build_messages()
 
@@ -19,6 +22,7 @@ def main():
 
     if st.session_state.get(AGENT_STATUS) == AgentStatus.RUNNING:
         call_model()
+        mark_expired_msgs()
         st.rerun()
 
 
