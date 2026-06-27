@@ -88,6 +88,6 @@ def build_messages():
                 st.markdown(f"```args:``` {msg.function_arguments}")
                 st.divider()
                 st.markdown(f"```result:```")
-                st.markdown(f"{msg.result}")
+                st.write(msg.result)
         else:
             st.error(f"Unknown message, type{type(msg)}")

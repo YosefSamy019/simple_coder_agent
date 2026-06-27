@@ -10,7 +10,7 @@ inside **Google Colab**, then obtain the generated **API URL** from there.
 This API is required for the agent to function correctly.
 
 You can access the hosted version of the application here:  
-[Simple Coder Agent 🚀](https://simplecoderagent-mvn7e6a3pbzvygpvcshm9y.streamlit.app/)
+[Simple Coder Agent 🚀](https://simplecoderagent-qxy4v5hjgzyav8hq4tjgp2.streamlit.app/)
 
 ---
 
